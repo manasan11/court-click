@@ -14,31 +14,17 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
 
   const getVisiblePages = (): (number | 'ellipsis')[] => {
     const pages: (number | 'ellipsis')[] = [];
-
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
       return pages;
     }
-
     pages.push(1);
-
-    if (currentPage > 3) {
-      pages.push('ellipsis');
-    }
-
+    if (currentPage > 3) pages.push('ellipsis');
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    if (currentPage < totalPages - 2) {
-      pages.push('ellipsis');
-    }
-
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (currentPage < totalPages - 2) pages.push('ellipsis');
     pages.push(totalPages);
-
     return pages;
   };
 
@@ -58,7 +44,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
 
   return (
     <div className="pagination-bar">
-      <div className="pagination-left">
+      <div className="pagination-controls">
         <button
           className="pagination-chevron"
           disabled={currentPage === 1}
@@ -88,17 +74,17 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         >
           <ChevronRight size={16} />
         </button>
-      </div>
-      <div className="pagination-right">
-        <span>Go To</span>
+        <span className="pagination-divider" />
+        <span className="pagination-go-label">Go to</span>
         <input
+          className="pagination-go-input"
           type="text"
           value={goValue}
           onChange={(e) => setGoValue(e.target.value.replace(/[^0-9]/g, ''))}
           onKeyDown={handleKeyDown}
           placeholder=""
         />
-        <button className="go-btn" onClick={handleGo}>
+        <button className="pagination-go-btn" onClick={handleGo}>
           Page
         </button>
       </div>

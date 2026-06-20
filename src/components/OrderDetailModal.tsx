@@ -27,10 +27,10 @@ export default function OrderDetailModal({ open, onClose, order }: OrderDetailMo
         <Descriptions.Item label="Customer">{order.userInfo.name}</Descriptions.Item>
         <Descriptions.Item label="Phone">{order.userInfo.phone}</Descriptions.Item>
         <Descriptions.Item label="Court Complex" span={2}>
-          {order.courtComplex}
+          {order.courtComplex.name}, {order.courtComplex.location}
         </Descriptions.Item>
         <Descriptions.Item label="Products" span={2}>
-          {order.products.join(', ')}
+          {order.products[0] ? `${order.products[0].classification} ${order.products[0].trackingToken}${order.products[0].subClause ? ` — ${order.products[0].subClause}` : ''} — ${order.products[0].amount}` : 'N/A'}
         </Descriptions.Item>
         <Descriptions.Item label="Order Date">{order.orderDate}</Descriptions.Item>
         <Descriptions.Item label="Status">

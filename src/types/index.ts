@@ -12,6 +12,18 @@ export interface Clerk {
   avatar?: string;
 }
 
+export interface CourtInfo {
+  name: string;
+  location: string;
+}
+
+export interface ProductItem {
+  classification: 'Judgement' | 'Interim Order' | 'Other';
+  trackingToken?: string;
+  subClause?: string;
+  amount: string;
+}
+
 export interface Order {
   id: string;
   orderId: number;
@@ -20,13 +32,14 @@ export interface Order {
     phone?: string;
     email?: string;
   };
-  courtComplex: string;
-  products: string[];
+  courtComplex: CourtInfo;
+  products: ProductItem[];
   orderDate: string;
   status: OrderStatus;
   hasEsign: boolean;
   tags: Tag[];
   note?: string;
+  ecopyFileName?: string;
   clerk?: Clerk;
   address?: string;
 }

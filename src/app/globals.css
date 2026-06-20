@@ -1,8 +1,8 @@
 :root {
   --black: #0D0D1A;
   --dark-bg: #1A1A2E;
-  --plum: #501B2D;
-  --plum-dark: #2D1B4E;
+--plum: #3A1534;
+--plum-dark: #2E0D2A;
   --yellow: #EAB308;
   --bg-gray: #F5F5F8;
   --bg-white: #FFFFFF;
@@ -210,7 +210,7 @@ body {
 
 /* ─── NAVIGATION TABS ─── */
 .tabs-container {
-  background: var(--plum-dark);
+  background: var(--plum);
   border-radius: 50px;
   padding: 5px;
   display: inline-flex;
@@ -394,6 +394,49 @@ body {
   border: 1px solid #FED7AA;
 }
 
+/* ─── CHOOSE TAG BUTTON ─── */
+.choose-tag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-white);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.choose-tag-btn:hover {
+  border-color: #D1D5DB;
+  color: var(--text-primary);
+}
+
+/* ─── TAGS NOTE ACTION BUTTON ─── */
+.tags-note-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-white);
+  cursor: pointer;
+  color: #3A1534;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.tags-note-action-btn:hover {
+  background: #FAFAFA;
+  border-color: #D1D5DB;
+}
+
 /* ─── ACTION BUTTONS ─── */
 .action-btn {
   display: inline-flex;
@@ -453,16 +496,6 @@ body {
   opacity: 0.9;
 }
 
-.clerks-assigned {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.clerks-assigned .clerk-name {
-  color: var(--plum);
-}
-
 /* ─── ANT DESIGN THEME OVERRIDES ─── */
 .ant-btn-primary {
   background: var(--plum) !important;
@@ -470,8 +503,8 @@ body {
 }
 
 .ant-btn-primary:hover {
-  background: #4A1525 !important;
-  border-color: #4A1525 !important;
+  background: #4E2144 !important;
+  border-color: #4E2144 !important;
 }
 
 .ant-btn:focus,
@@ -483,13 +516,13 @@ body {
 .ant-input:focus,
 .ant-input-focused {
   border-color: var(--plum) !important;
-  box-shadow: 0 0 0 2px rgba(80, 27, 45, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(58, 21, 52, 0.1) !important;
 }
 
 .ant-select-focused .ant-select-selector,
 .ant-select-selector:focus {
   border-color: var(--plum) !important;
-  box-shadow: 0 0 0 2px rgba(80, 27, 45, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(58, 21, 52, 0.1) !important;
 }
 
 .ant-pagination-item-active {
@@ -517,21 +550,21 @@ a {
 }
 
 a:hover {
-  color: #4A1525;
+  color: #4E2144;
 }
 
 /* ─── PAGINATION ─── */
 .pagination-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px;
+  justify-content: flex-end;
+  padding: 12px 20px;
   border-top: 1px solid var(--border-color);
   background: var(--bg-white);
   border-radius: 0 0 16px 16px;
 }
 
-.pagination-left {
+.pagination-controls {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -557,7 +590,7 @@ a:hover {
 
 .pagination-btn:hover:not(:disabled):not(.active):not(.ellipsis-btn) {
   background: #F3F4F6;
-  color: var(--plum);
+  color: #3A1534;
 }
 
 .pagination-btn:disabled {
@@ -566,14 +599,14 @@ a:hover {
 }
 
 .pagination-btn.active {
-  background: var(--plum);
-  border-color: var(--plum);
+  background: #3A1534;
+  border-color: #3A1534;
   color: white;
   border: none;
 }
 
 .pagination-btn.active:hover {
-  background: #4A1525;
+  background: #2E0D2A;
 }
 
 .pagination-btn.ellipsis-btn {
@@ -599,8 +632,8 @@ a:hover {
 }
 
 .pagination-chevron:hover:not(:disabled) {
-  border-color: #D1D5DB;
-  color: var(--text-primary);
+  border-color: #3A1534;
+  color: #3A1534;
 }
 
 .pagination-chevron:disabled {
@@ -608,15 +641,20 @@ a:hover {
   cursor: not-allowed;
 }
 
-.pagination-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-secondary);
+.pagination-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 10px;
 }
 
-.pagination-right input {
+.pagination-go-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-right: 2px;
+}
+
+.pagination-go-input {
   width: 52px;
   height: 34px;
   border: 1px solid var(--border-color);
@@ -627,11 +665,12 @@ a:hover {
   font-family: inherit;
 }
 
-.pagination-right input:focus {
-  border-color: var(--plum);
+.pagination-go-input:focus {
+  border-color: #3A1534;
+  box-shadow: 0 0 0 2px rgba(58, 21, 52, 0.12);
 }
 
-.pagination-right .go-btn {
+.pagination-go-btn {
   padding: 6px 14px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
@@ -641,11 +680,12 @@ a:hover {
   color: var(--text-primary);
   transition: all 0.15s;
   font-family: inherit;
+  margin-left: 2px;
 }
 
-.pagination-right .go-btn:hover {
-  border-color: var(--plum);
-  color: var(--plum);
+.pagination-go-btn:hover {
+  border-color: #3A1534;
+  color: #3A1534;
 }
 
 /* ─── USER INFO ─── */
@@ -659,7 +699,7 @@ a:hover {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: var(--plum-dark);
+  background: var(--plum);
   color: white;
   display: flex;
   align-items: center;
@@ -878,15 +918,14 @@ a:hover {
     font-size: 12px;
   }
   .pagination-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  .pagination-left {
     justify-content: center;
+  }
+  .pagination-controls {
     flex-wrap: wrap;
-  }
-  .pagination-right {
     justify-content: center;
+    gap: 4px;
+  }
+  .pagination-divider {
+    display: none;
   }
 }

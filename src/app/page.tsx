@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import OrdersTable from '@/components/OrdersTable';
-import FilterDrawer from '@/components/FilterDrawer';
+import FilterModal from '@/components/FilterModal';
 import { orders } from '@/data/mockData';
 
 const tabs = [
@@ -39,7 +39,7 @@ export default function Home() {
         </div>
         <OrdersTable orders={orders} />
       </div>
-      <FilterDrawer open={filterOpen} onClose={() => setFilterOpen(false)} />
+      <FilterModal open={filterOpen} onClose={() => setFilterOpen(false)} />
     </>
   );
 }
