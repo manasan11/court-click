@@ -42,6 +42,11 @@ export interface Order {
   ecopyFileName?: string;
   clerk?: Clerk;
   address?: string;
+  trackingId?: string;
+  paymentCompletedDate?: string;
+  appliedDate?: string;
+  dispatchedDate?: string;
+  deliveredDate?: string;
 }
 
 export interface User {

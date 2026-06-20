@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo, useCallback, memo } from 'react';
 import { Table, Tooltip, Upload, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
@@ -58,7 +58,7 @@ const STATUS_PILLS: Record<OrderStatus, { bg: string; text: string }> = {
   'Payment Completed': { bg: '#FEF3C7', text: '#92400E' },
 };
 
-export default function OrdersTable({ orders, currentPage, onPageChange }: OrdersTableProps) {
+const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChange }: OrdersTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [noteModalOpen, setNoteModalOpen] = useState(false);
@@ -111,14 +111,14 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
   const startIndex = (currentPage - 1) * USERS_PER_PAGE;
   const currentOrders = orders.slice(startIndex, startIndex + USERS_PER_PAGE);
 
-  const handleRemoveTag = (orderId: string, tagId: string) => {
+  const handleRemoveTag = useCallback((orderId: string, tagId: string) => {
     setRowTags((prev) => ({
       ...prev,
       [orderId]: (prev[orderId] || []).filter((t) => t.id !== tagId),
     }));
-  };
+  }, []);
 
-  const handleCreateTag = (newTag: Tag) => {
+  const handleCreateTag = useCallback((newTag: Tag) => {
     setAvailableTags((prev) => [...prev, newTag]);
     if (tagSelectRowId) {
       setRowTags((prev) => ({
@@ -126,9 +126,9 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
         [tagSelectRowId]: [...(prev[tagSelectRowId] || []), newTag],
       }));
     }
-  };
+  }, [tagSelectRowId]);
 
-  const handleQuickTagToggle = (orderId: string, tagId: string) => {
+  const handleQuickTagToggle = useCallback((orderId: string, tagId: string) => {
     setRowTags((prev) => {
       const current = prev[orderId] || [];
       const tag = availableTags.find((t) => t.id === tagId);
@@ -139,14 +139,13 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       }
       return { ...prev, [orderId]: [...current, tag] };
     });
-  };
+  }, [availableTags]);
 
-  const columns: ColumnsType<Order> = [
+  const columns: ColumnsType<Order> = useMemo(() => [
     {
       title: '#',
       key: 'index',
       width: 50,
-      fixed: 'left',
       render: (_: unknown, __: unknown, index: number) => (
         <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: 12 }}>
           {startIndex + index + 1}
@@ -157,7 +156,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       title: 'User Info',
       key: 'userInfo',
       width: 240,
-      fixed: 'left',
       render: (_, record) => (
         <div className="user-info-cell">
           <div className="user-avatar">
@@ -619,7 +617,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
         );
       },
     },
-  ];
+  ], [startIndex, rowStatus, openStatusRowId, notes, rowTags, availableTags, ecopyFiles, uploadingId, rowClerks]);
 
   return (
     <>
@@ -693,4 +691,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       )}
     </>
   );
-}
+});
+
+export default OrdersTable;

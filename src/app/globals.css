@@ -1,15 +1,33 @@
+/* ─── THEME VARIABLES ─── */
 :root {
-  --black: #0D0D1A;
-  --dark-bg: #1A1A2E;
---plum: #3A1534;
---plum-dark: #2E0D2A;
-  --yellow: #EAB308;
   --bg-gray: #F5F5F8;
   --bg-white: #FFFFFF;
   --text-primary: #111827;
   --text-secondary: #6B7280;
   --border-color: #E5E7EB;
+  --hover-bg: #F9FAFB;
+  --table-header-bg: #FAFAFA;
+  --black: #0D0D1A;
+  --dark-bg: #1A1A2E;
+  --plum: #3A1534;
+  --plum-dark: #2E0D2A;
+  --yellow: #EAB308;
   --sidebar-width: 88px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --transition-fast: 0.15s;
+}
+
+[data-theme='dark'] {
+  --bg-gray: #0D0D1A;
+  --bg-white: #1A1A2E;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --border-color: #2D2D3F;
+  --hover-bg: #1E1E3A;
+  --table-header-bg: #16162A;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -23,6 +41,7 @@ body {
   background: var(--bg-gray);
   color: var(--text-primary);
   overflow-x: hidden;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 /* ─── LAYOUT ─── */
@@ -66,7 +85,7 @@ body {
   position: relative;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.45);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
 }
 
 .sidebar-icon-wrap:hover {
@@ -89,11 +108,33 @@ body {
   border-radius: 0 3px 3px 0;
 }
 
+.sidebar-spacer {
+  flex: 1;
+}
+
+.sidebar-theme-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  transition: all var(--transition-fast);
+}
+
+.sidebar-theme-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .main-layout {
   margin-left: var(--sidebar-width);
   min-height: 100vh;
   padding: 20px 28px;
   max-width: calc(100vw - var(--sidebar-width));
+  transition: margin-left var(--transition-fast);
 }
 
 /* ─── HEADER ─── */
@@ -102,6 +143,7 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 20px;
+  gap: 16px;
 }
 
 .header-title h1 {
@@ -122,6 +164,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .control-btn {
@@ -135,7 +178,7 @@ body {
   background: var(--bg-white);
   cursor: pointer;
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
 }
 
 .control-btn:hover {
@@ -159,6 +202,7 @@ body {
   color: var(--text-primary);
   outline: none;
   font-family: inherit;
+  transition: border-color var(--transition-fast);
 }
 
 .header-search input::placeholder {
@@ -261,8 +305,9 @@ body {
   background: var(--bg-white);
   border-radius: 16px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
   padding-bottom: 8px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .table-container .ant-table-wrapper {
@@ -284,7 +329,7 @@ body {
 }
 
 .table-container .ant-table-thead > tr > th {
-  background: #FAFAFA !important;
+  background: var(--table-header-bg) !important;
   color: var(--text-secondary) !important;
   font-weight: 600 !important;
   font-size: 11px !important;
@@ -293,6 +338,7 @@ body {
   border-bottom: 1px solid var(--border-color) !important;
   padding: 10px 12px !important;
   white-space: nowrap !important;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .table-container .ant-table-thead > tr > th::before {
@@ -304,14 +350,15 @@ body {
   border-bottom: 1px solid var(--border-color) !important;
   font-size: 12px;
   vertical-align: middle;
+  transition: border-color var(--transition-fast);
 }
 
 .table-container .ant-table-tbody > tr:hover > td {
-  background: #F9FAFB !important;
+  background: var(--hover-bg) !important;
 }
 
 .table-container .ant-table-tbody > tr:hover > td.ant-table-cell-fix-left {
-  background: #F9FAFB !important;
+  background: var(--hover-bg) !important;
 }
 
 /* ─── BORDERED TABLE ─── */
@@ -321,11 +368,11 @@ body {
 }
 
 .table-container .ant-table-bordered .ant-table-thead > tr > th {
-  border-right: 1px solid #E5E7EB !important;
+  border-right: 1px solid var(--border-color) !important;
 }
 
 .table-container .ant-table-bordered .ant-table-tbody > tr > td {
-  border-right: 1px solid #E5E7EB !important;
+  border-right: 1px solid var(--border-color) !important;
 }
 
 .table-container .ant-table-bordered .ant-table-tbody > tr > td:last-child,
@@ -335,7 +382,7 @@ body {
 
 .table-container .ant-table-bordered .ant-table-thead > tr > th,
 .table-container .ant-table-bordered .ant-table-tbody > tr > td {
-  border-bottom: 1px solid #E5E7EB !important;
+  border-bottom: 1px solid var(--border-color) !important;
 }
 
 .table-container .ant-table-bordered .ant-table-tbody > tr:last-child > td {
@@ -353,7 +400,7 @@ body {
 }
 
 .table-container .ant-table-thead .ant-table-cell-fix-left {
-  background: #FAFAFA !important;
+  background: var(--table-header-bg) !important;
 }
 
 .table-container .ant-table {
@@ -462,7 +509,7 @@ body {
   font-size: 10px;
   color: var(--text-secondary);
   font-family: inherit;
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
@@ -481,12 +528,12 @@ body {
   background: var(--bg-white);
   cursor: pointer;
   color: #3A1534;
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   flex-shrink: 0;
 }
 
 .tags-note-action-btn:hover {
-  background: #FAFAFA;
+  background: var(--hover-bg);
   border-color: #D1D5DB;
 }
 
@@ -504,14 +551,14 @@ body {
   font-size: 11px;
   font-weight: 500;
   color: var(--text-primary);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   white-space: nowrap;
   font-family: inherit;
 }
 
 .action-btn:hover {
   border-color: #D1D5DB;
-  background: #FAFAFA;
+  background: var(--hover-bg);
 }
 
 .action-btn.primary {
@@ -523,8 +570,6 @@ body {
 .action-btn.primary:hover {
   opacity: 0.9;
 }
-
-
 
 .action-btn.esign {
   background: #F0FDF4;
@@ -617,6 +662,7 @@ a:hover {
   border-top: 1px solid var(--border-color);
   background: var(--bg-white);
   border-radius: 0 0 16px 16px;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .pagination-controls {
@@ -645,13 +691,13 @@ a:hover {
   color: var(--text-primary);
   font-size: 13px;
   font-weight: 500;
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   padding: 0 8px;
   font-family: inherit;
 }
 
 .pagination-btn:hover:not(:disabled):not(.active):not(.ellipsis-btn) {
-  background: #F3F4F6;
+  background: var(--hover-bg);
   color: #3A1534;
 }
 
@@ -687,10 +733,10 @@ a:hover {
   justify-content: center;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: white;
+  background: var(--bg-white);
   cursor: pointer;
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
 }
 
 .pagination-chevron:hover:not(:disabled) {
@@ -725,6 +771,9 @@ a:hover {
   font-size: 13px;
   outline: none;
   font-family: inherit;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast);
 }
 
 .pagination-go-input:focus {
@@ -736,11 +785,11 @@ a:hover {
   padding: 6px 14px;
   border-radius: 6px;
   border: 1px solid var(--border-color);
-  background: white;
+  background: var(--bg-white);
   cursor: pointer;
   font-size: 13px;
   color: var(--text-primary);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   font-family: inherit;
   margin-left: 2px;
 }
@@ -805,12 +854,12 @@ a:hover {
   padding: 2px 8px;
   border-radius: 4px;
   border: none;
-  background: #F3F4F6;
+  background: var(--hover-bg);
   cursor: pointer;
   font-size: 10px;
   font-weight: 500;
   color: var(--text-primary);
-  transition: all 0.15s;
+  transition: all var(--transition-fast);
   font-family: inherit;
   white-space: nowrap;
   line-height: 1.4;
@@ -914,8 +963,10 @@ a:hover {
   position: sticky;
   bottom: 0;
   z-index: 50;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
+/* ─── RESPONSIVE: LARGE DESKTOP ─── */
 @media (max-width: 1439px) {
   .main-layout {
     padding: 16px 20px;
@@ -925,6 +976,7 @@ a:hover {
   }
 }
 
+/* ─── RESPONSIVE: DESKTOP ─── */
 @media (max-width: 1280px) {
   .main-layout {
     padding: 16px;
@@ -939,15 +991,34 @@ a:hover {
   .header-search {
     width: 180px;
   }
+  .header-title h1 {
+    font-size: 20px;
+  }
 }
 
+/* ─── RESPONSIVE: TABLET ─── */
 @media (max-width: 1024px) {
   .tabs-container {
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-pill {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  .header-search {
+    width: 160px;
+  }
+  .page-footer {
+    padding: 12px 16px;
+  }
+  .pagination-go-section {
+    margin-left: 12px;
   }
 }
 
+/* ─── RESPONSIVE: MOBILE ─── */
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
@@ -969,12 +1040,27 @@ a:hover {
     flex: 1;
     min-width: 0;
   }
+  .header-title h1 {
+    font-size: 18px;
+  }
+  .header-title p {
+    font-size: 12px;
+  }
+  .header-controls {
+    width: 100%;
+    gap: 6px;
+  }
+  .header-search {
+    width: 100%;
+  }
   .tab-pill {
     padding: 6px 14px;
     font-size: 12px;
   }
   .pagination-bar {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
   }
   .pagination-controls {
     flex-wrap: wrap;
@@ -983,5 +1069,36 @@ a:hover {
   }
   .pagination-divider {
     display: none;
+  }
+  .pagination-go-section {
+    margin-left: 0;
+  }
+  .table-container {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+/* ─── RESPONSIVE: SMALL MOBILE ─── */
+@media (max-width: 480px) {
+  .header-title h1 {
+    font-size: 16px;
+  }
+  .tab-pill {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  .tabs-container {
+    padding: 4px;
+    gap: 3px;
+  }
+  .control-btn {
+    width: 34px;
+    height: 34px;
+  }
+  .header-dropdown {
+    height: 34px;
+    padding: 0 8px;
+    font-size: 11px;
   }
 }

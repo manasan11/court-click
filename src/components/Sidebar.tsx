@@ -1,7 +1,9 @@
 'use client';
 
-import { LayoutDashboard, Users, FileText, FolderOpen, Bell, Settings, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, FolderOpen, Bell, Settings, ChevronRight, Moon, Sun } from 'lucide-react';
 import { useState } from 'react';
+import { Tooltip } from 'antd';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SidebarProps {
   open: boolean;
@@ -20,6 +22,8 @@ const menuItems = [
 
 export default function Sidebar({ open, onToggle }: SidebarProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
 
   return (
     <>
@@ -33,14 +37,21 @@ export default function Sidebar({ open, onToggle }: SidebarProps) {
           <img src="/court-logo.png" alt="Court Logo" width={36} height={36} style={{ objectFit: 'contain' }} />
         </div>
         {menuItems.map((item, i) => (
-          <div
-            key={item.label}
-            className={`sidebar-icon-wrap${i === activeIndex ? ' active' : ''}`}
-            onClick={() => setActiveIndex(i)}
-          >
-            <item.icon size={22} strokeWidth={1.5} />
-          </div>
+          <Tooltip key={item.label} title={item.label} placement="right">
+            <div
+              className={`sidebar-icon-wrap${i === activeIndex ? ' active' : ''}`}
+              onClick={() => setActiveIndex(i)}
+            >
+              <item.icon size={22} strokeWidth={1.5} />
+            </div>
+          </Tooltip>
         ))}
+        <div className="sidebar-spacer" />
+        <Tooltip title={isDark ? 'Light Mode' : 'Dark Mode'} placement="right">
+          <button className="sidebar-theme-btn" onClick={toggleTheme}>
+            {isDark ? <Sun size={20} strokeWidth={1.5} /> : <Moon size={20} strokeWidth={1.5} />}
+          </button>
+        </Tooltip>
       </div>
     </>
   );

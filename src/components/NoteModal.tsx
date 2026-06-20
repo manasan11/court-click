@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, Input, Button } from 'antd';
+import { Modal, Input, Button, message } from 'antd';
 import { useState } from 'react';
 
 interface NoteModalProps {
@@ -13,10 +13,27 @@ interface NoteModalProps {
 
 export default function NoteModal({ open, onClose, orderId, initialNote, onSave }: NoteModalProps) {
   const [note, setNote] = useState(initialNote || '');
+  const [saving, setSaving] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const prevNote = initialNote || '';
+
+    // Optimistic: update immediately
     onSave(orderId, note);
     onClose();
+
+    // Simulate async API call
+    setSaving(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      message.success('Note saved successfully');
+    } catch {
+      // Rollback on failure
+      onSave(orderId, prevNote);
+      message.error('Failed to save note');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -30,6 +47,7 @@ export default function NoteModal({ open, onClose, orderId, initialNote, onSave 
           <Button onClick={onClose}>Cancel</Button>
           <Button
             type="primary"
+            loading={saving}
             style={{ background: '#3A1534', borderColor: '#3A1534' }}
             onClick={handleSave}
           >

@@ -26,7 +26,7 @@ export const orders: Order[] = [
   {
     id: 'CTC-001',
     orderId: 10234,
-    userInfo: { name: 'Rajesh Kumar', phone: '+91-9876543210' },
+    userInfo: { name: 'Rajesh Kumar', phone: '+91-9876543210', email: 'rajesh.kumar@gmail.com' },
     courtComplex: { name: 'District Court, Dwarka', location: 'Delhi' },
     products: [
       { classification: 'Judgement', trackingToken: '#584854', amount: '₹3,500' },
@@ -37,11 +37,14 @@ export const orders: Order[] = [
     tags: [tags[0], tags[4]],
     clerk: clerks[0],
     address: '123, Sector 12, Dwarka, New Delhi - 110075',
+    trackingId: 'EL767335963IN',
+    appliedDate: '12 Jun 2026 02:15 PM',
+    dispatchedDate: '13 Jun 2026 09:30 AM',
   },
   {
     id: 'CTC-002',
     orderId: 10235,
-    userInfo: { name: 'Sunita Verma', phone: '+91-9876543211' },
+    userInfo: { name: 'Sunita Verma', phone: '+91-9876543211', email: 'sunita.verma@gmail.com' },
     courtComplex: { name: 'Bombay High Court', location: 'Mumbai' },
     products: [
       { classification: 'Judgement', trackingToken: '#921045', amount: '₹5,200' },
@@ -52,11 +55,15 @@ export const orders: Order[] = [
     tags: [tags[1], tags[2]],
     clerk: clerks[1],
     address: '456, Linking Road, Bandra West, Mumbai - 400050',
+    trackingId: 'EL771234567IN',
+    appliedDate: '12 Jun 2026 03:00 PM',
+    dispatchedDate: '14 Jun 2026 10:15 AM',
+    deliveredDate: '16 Jun 2026 04:45 PM',
   },
   {
     id: 'CTC-003',
     orderId: 10236,
-    userInfo: { name: 'Aarav Mehta', phone: '+91-9876543212' },
+    userInfo: { name: 'Aarav Mehta', phone: '+91-9876543212', email: 'aarav.mehta@gmail.com' },
     courtComplex: { name: 'Court Complex, Kunnamkullam', location: 'Kunnamkullam' },
     products: [
       { classification: 'Interim Order', trackingToken: '#331278', amount: '₹1,800' },
@@ -67,11 +74,12 @@ export const orders: Order[] = [
     tags: [tags[5], tags[6]],
     clerk: undefined,
     address: '789, MG Road, Indiranagar, Bangalore - 560038',
+    trackingId: 'EL779876543IN',
   },
   {
     id: 'CTC-004',
     orderId: 10237,
-    userInfo: { name: 'Deepika Joshi', phone: '+91-9876543213' },
+    userInfo: { name: 'Deepika Joshi', phone: '+91-9876543213', email: 'deepika.joshi@gmail.com' },
     courtComplex: { name: 'Rajasthan High Court', location: 'Jaipur' },
     products: [
       { classification: 'Other', trackingToken: '#223456', amount: '₹4,000', subClause: 'Property Valuation Affidavit' },
@@ -82,11 +90,13 @@ export const orders: Order[] = [
     tags: [tags[3]],
     clerk: clerks[2],
     address: 'Plot 5, Civil Lines, Jaipur - 302001',
+    trackingId: 'EL764567892IN',
+    appliedDate: '11 Jun 2026 01:30 PM',
   },
   {
     id: 'CTC-005',
     orderId: 10238,
-    userInfo: { name: 'Vivek Nair', phone: '+91-9876543214' },
+    userInfo: { name: 'Vivek Nair', phone: '+91-9876543214', email: 'vivek.nair@gmail.com' },
     courtComplex: { name: 'Kerala High Court', location: 'Kochi' },
     products: [
       { classification: 'Judgement', trackingToken: '#112233', amount: '₹6,750' },
@@ -97,11 +107,15 @@ export const orders: Order[] = [
     tags: [tags[7], tags[9]],
     clerk: clerks[3],
     address: 'TC 15/789, MG Road, Trivandrum - 695001',
+    trackingId: 'EL769012345IN',
+    appliedDate: '10 Jun 2026 02:45 PM',
+    dispatchedDate: '12 Jun 2026 08:00 AM',
+    deliveredDate: '15 Jun 2026 11:30 AM',
   },
   {
     id: 'CTC-006',
     orderId: 10239,
-    userInfo: { name: 'Anjali Deshmukh', phone: '+91-9876543215' },
+    userInfo: { name: 'Anjali Deshmukh', phone: '+91-9876543215', email: 'anjali.deshmukh@gmail.com' },
     courtComplex: { name: 'Madras High Court', location: 'Chennai' },
     products: [
       { classification: 'Other', trackingToken: '#998877', amount: '₹1,500', subClause: 'Birth Certificate Attestation' },
@@ -112,11 +126,12 @@ export const orders: Order[] = [
     tags: [tags[8]],
     clerk: undefined,
     address: '88, Anna Nagar, Chennai - 600040',
+    trackingId: 'EL765432109IN',
   },
   {
     id: 'CTC-007',
     orderId: 10240,
-    userInfo: { name: 'Rohan Gupta', phone: '+91-9876543216' },
+    userInfo: { name: 'Rohan Gupta', phone: '+91-9876543216', email: 'rohan.gupta@gmail.com' },
     courtComplex: { name: 'Allahabad High Court', location: 'Prayagraj' },
     products: [
       { classification: 'Other', trackingToken: '#554433', amount: '₹3,200', subClause: 'Will Registration Deed' },
@@ -127,11 +142,12 @@ export const orders: Order[] = [
     tags: [tags[4], tags[5]],
     clerk: undefined,
     address: '17/2, Civil Lines, Prayagraj - 211001',
+    trackingId: 'EL771234568IN',
   },
   {
     id: 'CTC-008',
     orderId: 10241,
-    userInfo: { name: 'Neha Kapoor', phone: '+91-9876543217' },
+    userInfo: { name: 'Neha Kapoor', phone: '+91-9876543217', email: 'neha.kapoor@gmail.com' },
     courtComplex: { name: 'Punjab & Haryana High Court', location: 'Chandigarh' },
     products: [
       { classification: 'Judgement', trackingToken: '#776655', amount: '₹4,500' },
@@ -142,11 +158,13 @@ export const orders: Order[] = [
     tags: [tags[1]],
     clerk: clerks[4],
     address: 'SCO 124, Sector 17, Chandigarh - 160017',
+    trackingId: 'EL768901234IN',
+    appliedDate: '09 Jun 2026 04:00 PM',
   },
   {
     id: 'CTC-009',
     orderId: 10242,
-    userInfo: { name: 'Imran Khan', phone: '+91-9876543218' },
+    userInfo: { name: 'Imran Khan', phone: '+91-9876543218', email: 'imran.khan@gmail.com' },
     courtComplex: { name: 'Calcutta High Court', location: 'Kolkata' },
     products: [
       { classification: 'Interim Order', trackingToken: '#332211', amount: '₹1,950' },
@@ -157,11 +175,15 @@ export const orders: Order[] = [
     tags: [tags[0], tags[6]],
     clerk: clerks[5],
     address: '56/1, Park Street, Kolkata - 700016',
+    trackingId: 'EL773456789IN',
+    appliedDate: '08 Jun 2026 11:20 AM',
+    dispatchedDate: '10 Jun 2026 02:00 PM',
+    deliveredDate: '13 Jun 2026 10:00 AM',
   },
   {
     id: 'CTC-010',
     orderId: 10243,
-    userInfo: { name: 'Pooja Singh', phone: '+91-9876543219' },
+    userInfo: { name: 'Pooja Singh', phone: '+91-9876543219', email: 'pooja.singh@gmail.com' },
     courtComplex: { name: 'Patna High Court', location: 'Patna' },
     products: [
       { classification: 'Other', trackingToken: '#887766', amount: '₹2,500', subClause: 'GST Registration Application' },
@@ -172,11 +194,12 @@ export const orders: Order[] = [
     tags: [tags[3]],
     clerk: undefined,
     address: 'Boring Road, Patna - 800001',
+    trackingId: 'EL765432110IN',
   },
   {
     id: 'CTC-011',
     orderId: 10244,
-    userInfo: { name: 'Karthik Iyer', phone: '+91-9876543220' },
+    userInfo: { name: 'Karthik Iyer', phone: '+91-9876543220', email: 'karthik.iyer@gmail.com' },
     courtComplex: { name: 'Gujarat High Court', location: 'Ahmedabad' },
     products: [
       { classification: 'Other', trackingToken: '#113355', amount: '₹5,000', subClause: 'Company Incorporation Certificate' },
@@ -187,11 +210,13 @@ export const orders: Order[] = [
     tags: [tags[9]],
     clerk: clerks[0],
     address: 'SG Highway, Ahmedabad - 380054',
+    trackingId: 'EL774567890IN',
+    appliedDate: '07 Jun 2026 03:45 PM',
   },
   {
     id: 'CTC-012',
     orderId: 10245,
-    userInfo: { name: 'Meera Nair', phone: '+91-9876543221' },
+    userInfo: { name: 'Meera Nair', phone: '+91-9876543221', email: 'meera.nair@gmail.com' },
     courtComplex: { name: 'District Court, Dwarka', location: 'Delhi' },
     products: [
       { classification: 'Judgement', trackingToken: '#998800', amount: '₹3,800' },
@@ -202,11 +227,12 @@ export const orders: Order[] = [
     tags: [tags[7]],
     clerk: undefined,
     address: 'Green Park Extension, New Delhi - 110016',
+    trackingId: 'EL761234569IN',
   },
   {
     id: 'CTC-013',
     orderId: 10246,
-    userInfo: { name: 'Arun Prakash', phone: '+91-9876543222' },
+    userInfo: { name: 'Arun Prakash', phone: '+91-9876543222', email: 'arun.prakash@gmail.com' },
     courtComplex: { name: 'Bombay High Court', location: 'Mumbai' },
     products: [
       { classification: 'Other', trackingToken: '#556677', amount: '₹7,200', subClause: 'Property Valuation Report' },
@@ -217,11 +243,15 @@ export const orders: Order[] = [
     tags: [tags[2], tags[8]],
     clerk: clerks[1],
     address: 'Marine Drive, Mumbai - 400020',
+    trackingId: 'EL775678901IN',
+    appliedDate: '06 Jun 2026 01:10 PM',
+    dispatchedDate: '08 Jun 2026 09:45 AM',
+    deliveredDate: '11 Jun 2026 03:30 PM',
   },
   {
     id: 'CTC-014',
     orderId: 10247,
-    userInfo: { name: 'Kavita Reddy', phone: '+91-9876543223' },
+    userInfo: { name: 'Kavita Reddy', phone: '+91-9876543223', email: 'kavita.reddy@gmail.com' },
     courtComplex: { name: 'Karnataka High Court', location: 'Bangalore' },
     products: [
       { classification: 'Other', trackingToken: '#334477', amount: '₹1,750', subClause: 'Power of Attorney Registration' },
@@ -232,11 +262,12 @@ export const orders: Order[] = [
     tags: [tags[0], tags[3]],
     clerk: undefined,
     address: 'JP Nagar, Bangalore - 560078',
+    trackingId: 'EL762345678IN',
   },
   {
     id: 'CTC-015',
     orderId: 10248,
-    userInfo: { name: 'Suresh Yadav', phone: '+91-9876543224' },
+    userInfo: { name: 'Suresh Yadav', phone: '+91-9876543224', email: 'suresh.yadav@gmail.com' },
     courtComplex: { name: 'Rajasthan High Court', location: 'Jaipur' },
     products: [
       { classification: 'Judgement', trackingToken: '#990011', amount: '₹3,250' },
@@ -247,5 +278,7 @@ export const orders: Order[] = [
     tags: [tags[4]],
     clerk: clerks[2],
     address: 'Malviya Nagar, Jaipur - 302017',
+    trackingId: 'EL776789012IN',
+    appliedDate: '05 Jun 2026 04:30 PM',
   },
 ];
