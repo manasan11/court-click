@@ -1,66 +1,45 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+
+import { useState } from 'react';
+import Sidebar from '@/components/Sidebar';
+import DashboardHeader from '@/components/DashboardHeader';
+import OrdersTable from '@/components/OrdersTable';
+import FilterDrawer from '@/components/FilterDrawer';
+import { orders } from '@/data/mockData';
+
+const tabs = [
+  { label: 'Orders', count: 121 },
+  { label: 'Clerks', count: 40 },
+  { label: 'Courts', count: 32 },
+  { label: 'Districts', count: 14 },
+  { label: 'Eligible Users', count: 11 },
+];
 
 export default function Home() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
+    <>
+      <Sidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <div className="main-layout">
+        <DashboardHeader onFilterClick={() => setFilterOpen(true)} />
+        <div className="tabs-container">
+          {tabs.map((tab, i) => (
+            <button
+              key={tab.label}
+              className={`tab-pill${i === activeTab ? ' active' : ''}`}
+              onClick={() => setActiveTab(i)}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              {tab.label}
+              <span className="tab-count">({tab.count})</span>
+            </button>
+          ))}
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <OrdersTable orders={orders} />
+      </div>
+      <FilterDrawer open={filterOpen} onClose={() => setFilterOpen(false)} />
+    </>
   );
 }
