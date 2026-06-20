@@ -1,7 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -18,13 +18,31 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       for (let i = 1; i <= totalPages; i++) pages.push(i);
       return pages;
     }
-    pages.push(1);
-    if (currentPage > 3) pages.push('ellipsis');
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, currentPage + 2);
+
+    const range = end - start + 1;
+    if (range < 5) {
+      if (start === 1) {
+        end = Math.min(totalPages, start + 4);
+      } else if (end === totalPages) {
+        start = Math.max(1, end - 4);
+      }
+    }
+
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) pages.push('ellipsis');
+    }
+
     for (let i = start; i <= end; i++) pages.push(i);
-    if (currentPage < totalPages - 2) pages.push('ellipsis');
-    pages.push(totalPages);
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) pages.push('ellipsis');
+      pages.push(totalPages);
+    }
+
     return pages;
   };
 
@@ -36,7 +54,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleGoKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') handleGo();
   };
 
@@ -74,19 +92,19 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         >
           <ChevronRight size={16} />
         </button>
-        <span className="pagination-divider" />
-        <span className="pagination-go-label">Go to</span>
+      </div>
+      <div className="pagination-go-section">
+        <span className="pagination-go-label">Go To</span>
         <input
           className="pagination-go-input"
           type="text"
+          inputMode="numeric"
           value={goValue}
-          onChange={(e) => setGoValue(e.target.value.replace(/[^0-9]/g, ''))}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => setGoValue(e.target.value.replace(/\D/g, ''))}
+          onKeyDown={handleGoKeyDown}
           placeholder=""
         />
-        <button className="pagination-go-btn" onClick={handleGo}>
-          Page
-        </button>
+        <span className="pagination-go-page-label">Page</span>
       </div>
     </div>
   );

@@ -5,12 +5,12 @@ import { Table, Tooltip, Upload, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   Eye, FileSignature, Copy, UserPlus, Upload as UploadIcon,
-  FileText, CheckCircle, Clock, X,
+  CheckCircle, Clock, X, Calendar, FileText,
   Pencil, Trash2, Share2, Diamond, ChevronDown, ChevronUp, NotebookPen,
 } from 'lucide-react';
 import type { Order, OrderStatus, Tag, Clerk } from '@/types';
 import { tags as initialTags } from '@/data/mockData';
-import Pagination from './Pagination';
+
 import OrderDetailModal from './OrderDetailModal';
 import NoteModal from './NoteModal';
 import ClerkShareModal from './ClerkShareModal';
@@ -21,6 +21,8 @@ import TagFilterDropdown from './TagFilterDropdown';
 
 interface OrdersTableProps {
   orders: Order[];
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
 const USERS_PER_PAGE = 3;
@@ -31,14 +33,32 @@ const STATUS_OPTIONS: { value: OrderStatus; label: string; color: string }[] = [
   { value: 'Payment Completed', label: 'Payment Completed', color: '#D97706' },
 ];
 
+const parseDate = (dateStr: string): Date => {
+  const months: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  const [day, mon, year] = dateStr.split(' ');
+  return new Date(parseInt(year), months[mon], parseInt(day));
+};
+
+const daysSince = (dateStr: string): number => {
+  const today = new Date(2026, 5, 20);
+  const d = parseDate(dateStr);
+  return Math.floor((today.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+};
+
+const generateTime = (orderId: number): string => {
+  const h = ((orderId * 7) % 12) + 1;
+  const m = ((orderId * 13) % 60).toString().padStart(2, '0');
+  const ampm = (orderId * 7) % 2 === 0 ? 'AM' : 'PM';
+  return `${h}:${m} ${ampm}`;
+};
+
 const STATUS_PILLS: Record<OrderStatus, { bg: string; text: string }> = {
   Cancelled: { bg: '#FEE2E2', text: '#991B1B' },
   'Order Placed': { bg: '#D1FAE5', text: '#065F46' },
   'Payment Completed': { bg: '#FEF3C7', text: '#92400E' },
 };
 
-export default function OrdersTable({ orders }: OrdersTableProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function OrdersTable({ orders, currentPage, onPageChange }: OrdersTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [noteModalOpen, setNoteModalOpen] = useState(false);
@@ -124,15 +144,20 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
   const columns: ColumnsType<Order> = [
     {
       title: '#',
-      dataIndex: 'orderId',
-      key: 'orderId',
-      width: 70,
-      render: (id: number) => <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{id}</span>,
+      key: 'index',
+      width: 50,
+      fixed: 'left',
+      render: (_: unknown, __: unknown, index: number) => (
+        <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: 12 }}>
+          {startIndex + index + 1}
+        </span>
+      ),
     },
     {
       title: 'User Info',
       key: 'userInfo',
-      width: 260,
+      width: 220,
+      fixed: 'left',
       render: (_, record) => (
         <div className="user-info-cell">
           <div className="user-avatar">
@@ -156,13 +181,13 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
     {
       title: 'Court Complex',
       key: 'courtComplex',
-      width: 200,
+      width: 170,
       render: (_, record) => (
         <div>
-          <div style={{ fontWeight: 600, fontSize: 13, color: '#111827', lineHeight: 1.4 }}>
+          <div style={{ fontWeight: 600, fontSize: 12, color: '#111827', lineHeight: 1.3 }}>
             {record.courtComplex.name}
           </div>
-          <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>
             {record.courtComplex.location}
           </div>
         </div>
@@ -171,20 +196,20 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
     {
       title: 'Products',
       key: 'products',
-      width: 220,
+      width: 170,
       render: (_, record) => {
         const p = record.products[0];
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <div style={{ fontWeight: 600, fontSize: 13, color: '#111827', lineHeight: 1.4 }}>
+            <div style={{ fontWeight: 600, fontSize: 11, color: '#111827', lineHeight: 1.3 }}>
               {p.classification} {p.trackingToken}
             </div>
             {p.classification === 'Other' && p.subClause && (
-              <div style={{ fontSize: 11, color: '#9CA3AF', lineHeight: 1.4, marginTop: 1 }}>
+              <div style={{ fontSize: 10, color: '#9CA3AF', lineHeight: 1.3 }}>
                 {p.subClause}
               </div>
             )}
-            <div style={{ fontSize: 12, color: '#374151', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: '#374151' }}>
               {p.amount}
             </div>
           </div>
@@ -192,21 +217,49 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
       },
     },
     {
-      title: 'Order Date',
-      dataIndex: 'orderDate',
+      title: () => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span>ORDER DATE</span>
+          <Calendar size={12} style={{ color: '#9CA3AF' }} />
+        </div>
+      ),
       key: 'orderDate',
       width: 120,
+      render: (_, record) => {
+        const elapsed = daysSince(record.orderDate);
+        const status = rowStatus[record.id] || record.status;
+        const showElapsed = status !== 'Cancelled';
+        const isWarning = status === 'Order Placed';
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <div style={{ fontWeight: 600, fontSize: 12, color: '#111827', lineHeight: 1.4 }}>
+              {record.orderDate}
+            </div>
+            <div style={{ fontSize: 11, color: '#9CA3AF', lineHeight: 1.4 }}>
+              {generateTime(record.orderId)}
+            </div>
+            {showElapsed && (
+              <div style={{ fontSize: 10, lineHeight: 1.4, marginTop: 1 }}>
+                <span style={{ fontWeight: 700, color: isWarning ? '#DC2626' : '#D97706' }}>
+                  {elapsed.toString().padStart(2, '0')}
+                </span>
+                <span style={{ color: '#6B7280' }}>{' '}days since payment</span>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: 'Status',
       key: 'status',
-      width: 220,
+      width: 185,
       render: (_, record) => {
         const current = rowStatus[record.id] || 'Order Placed';
         const isOpen = openStatusRowId === record.id;
         const pill = STATUS_PILLS[current];
         return (
-          <div style={{ position: 'relative', width: '100%' }}>
+          <div style={{ position: 'relative' }}>
             <button
               onClick={() => setOpenStatusRowId(isOpen ? null : record.id)}
               style={{
@@ -214,12 +267,12 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
-                padding: '7px 12px',
-                borderRadius: 8,
+                padding: '4px 8px',
+                borderRadius: 6,
                 border: '1px solid #E5E7EB',
                 background: '#fff',
                 cursor: 'pointer',
-                fontSize: 12,
+                fontSize: 11,
                 color: '#374151',
                 fontFamily: 'inherit',
                 fontWeight: 500,
@@ -227,20 +280,19 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
               }}
             >
               Update status
-              {isOpen ? <ChevronUp size={12} color="#9CA3AF" /> : <ChevronDown size={12} color="#9CA3AF" />}
+              {isOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
             </button>
-            <div style={{ marginTop: 11 }}>
+            <div style={{ marginTop: 6 }}>
               <span
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  padding: '4px 14px',
+                  padding: '2px 10px',
                   borderRadius: 20,
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: 600,
                   background: pill.bg,
                   color: pill.text,
-                  letterSpacing: '0.01em',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -260,7 +312,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.04)',
                   padding: 4,
                   zIndex: 100,
-                  minWidth: 150,
+                  minWidth: 140,
                 }}
               >
                 {STATUS_OPTIONS.map((opt) => (
@@ -273,12 +325,12 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                     style={{
                       display: 'block',
                       width: '100%',
-                      padding: '7px 12px',
+                      padding: '5px 10px',
                       border: 'none',
                       borderRadius: 6,
                       background: 'transparent',
                       cursor: 'pointer',
-                      fontSize: 12,
+                      fontSize: 11,
                       color: opt.color,
                       fontWeight: current === opt.value ? 700 : 500,
                       textAlign: 'left',
@@ -297,28 +349,34 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
       },
     },
     {
-      title: 'Order Details / E-sign',
+      title: () => (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.25 }}>
+          <span>ORDER DETAILS/</span>
+          <span style={{ fontSize: 10, letterSpacing: '0.06em' }}>E-SIGN</span>
+        </div>
+      ),
       key: 'actions',
-      width: 160,
+      width: 80,
       render: (_, record) => (
-        <div className="order-details-cell">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
           <Tooltip title="View Details">
             <button
               className="action-btn"
+              style={{ padding: '3px 8px', fontSize: 10, gap: 3 }}
               onClick={() => {
                 setSelectedOrder(record);
                 setDetailOpen(true);
               }}
             >
-              <Eye size={14} />
+              <Eye size={12} />
               View
             </button>
           </Tooltip>
           {record.hasEsign && (
             <Tooltip title="E-sign">
-              <button className="action-btn esign">
-                <FileSignature size={14} />
-                E-sign
+              <button className="action-btn esign" style={{ padding: '3px 8px', fontSize: 10, gap: 3 }}>
+                <FileSignature size={12} />
+                Sign
               </button>
             </Tooltip>
           )}
@@ -326,14 +384,90 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
       ),
     },
     {
+      title: () => (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          <span>CLERK</span>
+          <Diamond size={8} fill="#9CA3AF" color="#9CA3AF" />
+        </div>
+      ),
+      key: 'clerk',
+      width: 110,
+      render: (_, record) => {
+        const clerk = rowClerks[record.id];
+        const hasClerk = !!clerk;
+        const clerkName = hasClerk ? clerk.name.split(' ')[0] : '';
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            {hasClerk ? (
+              <>
+                <div style={{ fontWeight: 700, fontSize: 11, color: '#111827', textAlign: 'center' }}>
+                  {clerkName}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Tooltip title="Edit">
+                    <button
+                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 1, display: 'flex' }}
+                      onClick={() => {
+                        setAssignClerkOrder(record);
+                        setAssignClerkOpen(true);
+                      }}
+                    >
+                      <Pencil size={11} />
+                    </button>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <button
+                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 1, display: 'flex' }}
+                      onClick={() => {
+                        setRowClerks((prev) => {
+                          const next = { ...prev };
+                          delete next[record.id];
+                          return next;
+                        });
+                      }}
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </Tooltip>
+                  <Tooltip title="Share">
+                    <button
+                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 1, display: 'flex' }}
+                      onClick={() => {
+                        setShareOrder(record);
+                        setShareModalOpen(true);
+                      }}
+                    >
+                      <Share2 size={11} />
+                    </button>
+                  </Tooltip>
+                </div>
+              </>
+            ) : (
+              <button
+                className="action-btn assign"
+                style={{ padding: '2px 10px', fontSize: 10, gap: 4, justifyContent: 'center' }}
+                onClick={() => {
+                  setAssignClerkOrder(record);
+                  setAssignClerkOpen(true);
+                }}
+              >
+                <UserPlus size={12} />
+                Assign
+              </button>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       title: 'Tags / Note',
       key: 'tagsNote',
-      width: 240,
+      width: 190,
       render: (_, record) => {
         const currentTags = rowTags[record.id] || [];
         return (
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: currentTags.length > 0 ? 6 : 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: currentTags.length > 0 ? 4 : 0 }}>
               <TagFilterDropdown
                 tags={availableTags}
                 selectedIds={(rowTags[record.id] || []).map((t) => t.id)}
@@ -343,48 +477,57 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
                   setCreateTagOpen(true);
                 }}
               >
-                <button className="choose-tag-btn">
-                  Choose Tag
-                  <ChevronDown size={12} />
+                <button className="choose-tag-btn" style={{ padding: '2px 8px', fontSize: 10, gap: 4 }}>
+                  Tag
+                  <ChevronDown size={10} />
                 </button>
               </TagFilterDropdown>
               <Tooltip title="Add Note">
                 <button
                   className="tags-note-action-btn"
+                  style={{ width: 26, height: 26 }}
                   onClick={() => {
                     setNoteTargetOrder(record);
                     setNoteModalOpen(true);
                   }}
                 >
-                  <NotebookPen size={16} />
+                  <NotebookPen size={14} />
                 </button>
               </Tooltip>
             </div>
             {currentTags.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                {currentTags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      padding: '2px 8px',
-                      borderRadius: 4,
-                      background: tag.color,
-                      color: '#fff',
-                      fontSize: 11,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {tag.name}
-                    <X
-                      size={10}
-                      style={{ cursor: 'pointer', opacity: 0.7 }}
-                      onClick={() => handleRemoveTag(record.id, tag.id)}
-                    />
-                  </span>
-                ))}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {currentTags.map((tag) => {
+                  const hex = tag.color.replace('#', '');
+                  const r = parseInt(hex.substring(0, 2), 16);
+                  const g = parseInt(hex.substring(2, 4), 16);
+                  const b = parseInt(hex.substring(4, 6), 16);
+                  const pastelBg = `rgba(${r}, ${g}, ${b}, 0.15)`;
+                  return (
+                    <span
+                      key={tag.id}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 3,
+                        padding: '1px 6px',
+                        borderRadius: 4,
+                        background: pastelBg,
+                        color: tag.color,
+                        fontSize: 10,
+                        fontWeight: 500,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {tag.name}
+                      <X
+                        size={8}
+                        style={{ cursor: 'pointer', opacity: 0.6 }}
+                        onClick={() => handleRemoveTag(record.id, tag.id)}
+                      />
+                    </span>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -392,153 +535,87 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
       },
     },
     {
-      title: () => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span>CLERK</span>
-          <Diamond size={10} fill="#9CA3AF" color="#9CA3AF" />
-        </div>
-      ),
-      key: 'clerk',
-      width: 200,
-      render: (_, record) => {
-        const clerk = rowClerks[record.id];
-        const hasClerk = !!clerk;
-        const clerkName = hasClerk ? clerk.name.split(' ')[0] : '';
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {hasClerk ? (
-              <>
-                <div style={{ fontWeight: 700, fontSize: 13, color: '#111827' }}>
-                  {clerkName}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Tooltip title="Edit">
-                    <button
-                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 2 }}
-                      onClick={() => {
-                        setAssignClerkOrder(record);
-                        setAssignClerkOpen(true);
-                      }}
-                    >
-                      <Pencil size={13} />
-                    </button>
-                  </Tooltip>
-                  <Tooltip title="Delete">
-                    <button
-                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 2 }}
-                      onClick={() => {
-                        setRowClerks((prev) => {
-                          const next = { ...prev };
-                          delete next[record.id];
-                          return next;
-                        });
-                      }}
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </Tooltip>
-                  <Tooltip title="Share">
-                    <button
-                      style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#6B7280', padding: 2 }}
-                      onClick={() => {
-                        setShareOrder(record);
-                        setShareModalOpen(true);
-                      }}
-                    >
-                      <Share2 size={13} />
-                    </button>
-                  </Tooltip>
-                </div>
-              </>
-            ) : (
-              <button
-                className="action-btn assign"
-                style={{ width: '100%', justifyContent: 'center', gap: 6 }}
-                onClick={() => {
-                  setAssignClerkOrder(record);
-                  setAssignClerkOpen(true);
-                }}
-              >
-                <UserPlus size={14} />
-                Assign
-              </button>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      title: 'ECopy',
+      title: 'E-Copy',
       key: 'ecopy',
-      width: 100,
+      width: 80,
       render: (_, record) => {
         const uploaded = ecopyFiles[record.id];
 
         if (uploaded) {
           return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CheckCircle size={14} style={{ color: '#10B981' }} />
-              <span style={{ fontSize: 12, color: '#065F46' }}>Uploaded</span>
             </div>
           );
         }
 
         if (uploadingId === record.id) {
           return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Clock size={14} style={{ color: '#F59E0B' }} />
-              <span style={{ fontSize: 12, color: '#92400E' }}>Uploading...</span>
             </div>
           );
         }
 
         return (
-          <Upload
-            accept=".pdf,.doc,.docx,.jpg,.png"
-            showUploadList={false}
-            beforeUpload={(file) => {
-              setUploadingId(record.id);
-              const timer = setTimeout(() => {
-                setEcopyFiles((prev) => ({ ...prev, [record.id]: file.name }));
-                setUploadingId(null);
-                message.success(`${file.name} uploaded successfully`);
-              }, 1200);
-              ecopyTimerRef.current = timer;
-              return false;
-            }}
-          >
-            <button className="action-btn assign" style={{ fontSize: 11, padding: '3px 10px' }}>
-              <UploadIcon size={12} />
-              Upload
-            </button>
-          </Upload>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Upload
+              accept=".pdf,.doc,.docx,.jpg,.png"
+              showUploadList={false}
+              beforeUpload={(file) => {
+                setUploadingId(record.id);
+                const timer = setTimeout(() => {
+                  setEcopyFiles((prev) => ({ ...prev, [record.id]: file.name }));
+                  setUploadingId(null);
+                  message.success(`${file.name} uploaded successfully`);
+                }, 1200);
+                ecopyTimerRef.current = timer;
+                return false;
+              }}
+            >
+              <button
+                className="action-btn assign"
+                style={{ fontSize: 10, padding: '2px 8px', gap: 3 }}
+              >
+                <UploadIcon size={11} />
+                Upload
+              </button>
+            </Upload>
+          </div>
         );
       },
     },
     {
       title: 'Note',
       key: 'note',
-      width: 80,
+      width: 70,
       render: (_, record) => {
         const hasNote = !!notes[record.id];
         return (
-          <Tooltip title={hasNote ? 'Edit Note' : 'Add Note'}>
-            <button
-              className="action-btn"
-              style={{
-                border: 'none',
-                background: 'transparent',
-                padding: '4px 8px',
-                color: hasNote ? '#3A1534' : 'var(--text-secondary)',
-              }}
-              onClick={() => {
-                setNoteTargetOrder(record);
-                setNoteModalOpen(true);
-              }}
-            >
-              <FileText size={16} />
-            </button>
-          </Tooltip>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Tooltip title={hasNote ? 'Edit Note' : 'Add Note'}>
+              <button
+                className="tags-note-action-btn"
+                style={{
+                  width: 26,
+                  height: 26,
+                  border: 'none',
+                  background: 'transparent',
+                  color: hasNote ? '#3A1534' : '#9CA3AF',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                onClick={() => {
+                  setNoteTargetOrder(record);
+                  setNoteModalOpen(true);
+                }}
+              >
+                <FileText size={14} />
+              </button>
+            </Tooltip>
+          </div>
         );
       },
     },
@@ -553,15 +630,11 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
             dataSource={currentOrders}
             rowKey="id"
             pagination={false}
-            bordered={false}
+            bordered
             size="middle"
+            scroll={{ x: 1450 }}
           />
         </div>
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
       </div>
       {selectedOrder && (
         <OrderDetailModal
