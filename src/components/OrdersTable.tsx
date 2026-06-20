@@ -384,6 +384,81 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       ),
     },
     {
+      title: 'Tags / Note',
+      key: 'tagsNote',
+      width: 220,
+      render: (_, record) => {
+        const currentTags = rowTags[record.id] || [];
+        return (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: currentTags.length > 0 ? 4 : 0 }}>
+              <TagFilterDropdown
+                tags={availableTags}
+                selectedIds={(rowTags[record.id] || []).map((t) => t.id)}
+                onToggle={(tagId) => handleQuickTagToggle(record.id, tagId)}
+                onCreateNew={() => {
+                  setTagSelectRowId(record.id);
+                  setCreateTagOpen(true);
+                }}
+              >
+                <button className="choose-tag-btn" style={{ padding: '2px 8px', fontSize: 10, gap: 4 }}>
+                  Choose Tag
+                  <ChevronDown size={10} />
+                </button>
+              </TagFilterDropdown>
+              <Tooltip title="Add Note">
+                <button
+                  className="tags-note-action-btn"
+                  style={{ width: 26, height: 26 }}
+                  onClick={() => {
+                    setNoteTargetOrder(record);
+                    setNoteModalOpen(true);
+                  }}
+                >
+                  <NotebookPen size={14} />
+                </button>
+              </Tooltip>
+            </div>
+            {currentTags.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                {currentTags.map((tag) => {
+                  const hex = tag.color.replace('#', '');
+                  const r = parseInt(hex.substring(0, 2), 16);
+                  const g = parseInt(hex.substring(2, 4), 16);
+                  const b = parseInt(hex.substring(4, 6), 16);
+                  const pastelBg = `rgba(${r}, ${g}, ${b}, 0.15)`;
+                  return (
+                    <span
+                      key={tag.id}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 3,
+                        padding: '1px 6px',
+                        borderRadius: 4,
+                        background: pastelBg,
+                        color: tag.color,
+                        fontSize: 10,
+                        fontWeight: 500,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {tag.name}
+                      <X
+                        size={8}
+                        style={{ cursor: 'pointer', opacity: 0.6 }}
+                        onClick={() => handleRemoveTag(record.id, tag.id)}
+                      />
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       title: () => (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
           <span>CLERK</span>
@@ -454,81 +529,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
                 <UserPlus size={12} />
                 Assign
               </button>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      title: 'Tags / Note',
-      key: 'tagsNote',
-      width: 220,
-      render: (_, record) => {
-        const currentTags = rowTags[record.id] || [];
-        return (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: currentTags.length > 0 ? 4 : 0 }}>
-              <TagFilterDropdown
-                tags={availableTags}
-                selectedIds={(rowTags[record.id] || []).map((t) => t.id)}
-                onToggle={(tagId) => handleQuickTagToggle(record.id, tagId)}
-                onCreateNew={() => {
-                  setTagSelectRowId(record.id);
-                  setCreateTagOpen(true);
-                }}
-              >
-                <button className="choose-tag-btn" style={{ padding: '2px 8px', fontSize: 10, gap: 4 }}>
-                  Choose Tag
-                  <ChevronDown size={10} />
-                </button>
-              </TagFilterDropdown>
-              <Tooltip title="Add Note">
-                <button
-                  className="tags-note-action-btn"
-                  style={{ width: 26, height: 26 }}
-                  onClick={() => {
-                    setNoteTargetOrder(record);
-                    setNoteModalOpen(true);
-                  }}
-                >
-                  <NotebookPen size={14} />
-                </button>
-              </Tooltip>
-            </div>
-            {currentTags.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
-                {currentTags.map((tag) => {
-                  const hex = tag.color.replace('#', '');
-                  const r = parseInt(hex.substring(0, 2), 16);
-                  const g = parseInt(hex.substring(2, 4), 16);
-                  const b = parseInt(hex.substring(4, 6), 16);
-                  const pastelBg = `rgba(${r}, ${g}, ${b}, 0.15)`;
-                  return (
-                    <span
-                      key={tag.id}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 3,
-                        padding: '1px 6px',
-                        borderRadius: 4,
-                        background: pastelBg,
-                        color: tag.color,
-                        fontSize: 10,
-                        fontWeight: 500,
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {tag.name}
-                      <X
-                        size={8}
-                        style={{ cursor: 'pointer', opacity: 0.6 }}
-                        onClick={() => handleRemoveTag(record.id, tag.id)}
-                      />
-                    </span>
-                  );
-                })}
-              </div>
             )}
           </div>
         );
