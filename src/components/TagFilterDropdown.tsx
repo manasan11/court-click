@@ -1,7 +1,7 @@
 'use client';
 
 import { Popover, Checkbox, Divider } from 'antd';
-import { Plus } from 'lucide-react';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import type { Tag } from '@/types';
 
 interface TagFilterDropdownProps {
@@ -9,6 +9,8 @@ interface TagFilterDropdownProps {
   selectedIds: string[];
   onToggle: (tagId: string) => void;
   onCreateNew: () => void;
+  onEdit: (tag: Tag) => void;
+  onDelete: (tagId: string) => void;
   children: React.ReactNode;
 }
 
@@ -17,34 +19,40 @@ export default function TagFilterDropdown({
   selectedIds,
   onToggle,
   onCreateNew,
+  onEdit,
+  onDelete,
   children,
 }: TagFilterDropdownProps) {
   const content = (
-    <div style={{ width: 220 }}>
+    <div style={{ width: 240 }}>
       <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', marginBottom: 10 }}>
         Tags
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 240, overflowY: 'auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: 240, overflowY: 'auto' }}>
         {tags.length === 0 && (
           <div style={{ textAlign: 'center', color: '#9CA3AF', padding: 12, fontSize: 12 }}>
             No tags available
           </div>
         )}
         {tags.map((tag) => (
-          <label
+          <div
             key={tag.id}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 8,
-              cursor: 'pointer',
-              fontSize: 13,
-              padding: '4px 0',
+              gap: 6,
+              padding: '4px 6px',
+              borderRadius: 6,
+              cursor: 'default',
+              transition: 'background 0.1s',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F9FAFB'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
           >
             <Checkbox
               checked={selectedIds.includes(tag.id)}
               onChange={() => onToggle(tag.id)}
+              style={{ flexShrink: 0 }}
             />
             <span
               style={{
@@ -54,31 +62,51 @@ export default function TagFilterDropdown({
                 background: tag.color,
                 color: '#fff',
                 fontSize: 12,
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
               {tag.name}
             </span>
-          </label>
+            <button
+              title="Edit"
+              onClick={(e) => { e.stopPropagation(); onEdit(tag); }}
+              style={{
+                border: 'none', background: 'transparent', cursor: 'pointer',
+                color: '#9CA3AF', padding: 2, display: 'flex', flexShrink: 0,
+                borderRadius: 4, transition: 'all 0.1s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#3A1534'; e.currentTarget.style.background = '#F3F4F6'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <Pencil size={12} />
+            </button>
+            <button
+              title="Delete"
+              onClick={(e) => { e.stopPropagation(); onDelete(tag.id); }}
+              style={{
+                border: 'none', background: 'transparent', cursor: 'pointer',
+                color: '#9CA3AF', padding: 2, display: 'flex', flexShrink: 0,
+                borderRadius: 4, transition: 'all 0.1s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#DC2626'; e.currentTarget.style.background = '#FEE2E2'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <Trash2 size={12} />
+            </button>
+          </div>
         ))}
       </div>
-      <Divider style={{ margin: '10px 0 6px' }} />
+      <Divider style={{ margin: '8px 0 6px' }} />
       <button
         onClick={onCreateNew}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          width: '100%',
-          padding: '8px 10px',
-          borderRadius: 6,
-          border: '1px solid #E5E7EB',
-          background: '#fff',
-          cursor: 'pointer',
-          fontSize: 13,
-          color: '#374151',
-          fontFamily: 'inherit',
-          fontWeight: 500,
-          transition: 'background 0.1s',
+          display: 'flex', alignItems: 'center', gap: 6, width: '100%',
+          padding: '8px 10px', borderRadius: 6, border: '1px solid #E5E7EB',
+          background: '#fff', cursor: 'pointer', fontSize: 13, color: '#374151',
+          fontFamily: 'inherit', fontWeight: 500, transition: 'background 0.1s',
         }}
         onMouseEnter={(e) => { e.currentTarget.style.background = '#F9FAFB'; }}
         onMouseLeave={(e) => { e.currentTarget.style.background = '#fff'; }}

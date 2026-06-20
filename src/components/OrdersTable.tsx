@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useMemo, useCallback, memo } from 'react';
-import { Table, Tooltip, Upload, message } from 'antd';
+import { Table, Tooltip, Upload, Modal, message, Popover } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   Eye, FileSignature, Copy, UserPlus, Upload as UploadIcon,
@@ -17,6 +17,7 @@ import ClerkShareModal from './ClerkShareModal';
 import AssignClerkModal from './AssignPersonnelDrawer';
 import AddClerkModal from './AddClerkModal';
 import CreateTagModal from './CreateTagModal';
+import EditTagModal from './EditTagModal';
 import TagFilterDropdown from './TagFilterDropdown';
 
 interface OrdersTableProps {
@@ -86,6 +87,8 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
   const [tagSelectRowId, setTagSelectRowId] = useState<string | null>(null);
 
   const [createTagOpen, setCreateTagOpen] = useState(false);
+  const [editTag, setEditTag] = useState<Tag | null>(null);
+  const [editTagOpen, setEditTagOpen] = useState(false);
 
   const [rowStatus, setRowStatus] = useState<Record<string, OrderStatus>>(() => {
     const initial: Record<string, OrderStatus> = {};
@@ -107,6 +110,8 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
   const [shareOrder, setShareOrder] = useState<Order | null>(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
+  const [copyAddressRowId, setCopyAddressRowId] = useState<string | null>(null);
+
   const totalPages = Math.ceil(orders.length / USERS_PER_PAGE);
   const startIndex = (currentPage - 1) * USERS_PER_PAGE;
   const currentOrders = orders.slice(startIndex, startIndex + USERS_PER_PAGE);
@@ -127,6 +132,42 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
       }));
     }
   }, [tagSelectRowId]);
+
+  const handleEditTag = useCallback((tag: Tag) => {
+    setEditTag(tag);
+    setEditTagOpen(true);
+  }, []);
+
+  const handleSaveEditTag = useCallback((updated: Tag) => {
+    setAvailableTags((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+    setRowTags((prev) => {
+      const next: Record<string, Tag[]> = {};
+      for (const [orderId, tags] of Object.entries(prev)) {
+        next[orderId] = tags.map((t) => (t.id === updated.id ? updated : t));
+      }
+      return next;
+    });
+  }, []);
+
+  const handleDeleteTag = useCallback((tagId: string) => {
+    Modal.confirm({
+      title: 'Delete Tag',
+      content: 'Are you sure you want to delete this tag? It will be removed from all orders.',
+      okText: 'Delete',
+      okButtonProps: { danger: true },
+      cancelText: 'Cancel',
+      onOk: () => {
+        setAvailableTags((prev) => prev.filter((t) => t.id !== tagId));
+        setRowTags((prev) => {
+          const next: Record<string, Tag[]> = {};
+          for (const [orderId, tags] of Object.entries(prev)) {
+            next[orderId] = tags.filter((t) => t.id !== tagId);
+          }
+          return next;
+        });
+      },
+    });
+  }, []);
 
   const handleQuickTagToggle = useCallback((orderId: string, tagId: string) => {
     setRowTags((prev) => {
@@ -165,13 +206,45 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
             <div className="user-name">{record.userInfo.name}</div>
             <div className="user-phone">{record.userInfo.phone}</div>
             <div className="user-order-id">#{record.orderId}</div>
-            <button
-              className="copy-address-btn"
-              onClick={() => navigator.clipboard.writeText(record.address || '')}
+            <Popover
+              open={copyAddressRowId === record.id}
+              onOpenChange={(visible) => {
+                if (!visible) setCopyAddressRowId(null);
+              }}
+              placement="top"
+              overlayStyle={{ zIndex: 1060 }}
+              content={
+                <div style={{ width: 280, padding: 0 }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: '#111827', marginBottom: 8 }}>
+                    {record.userInfo.name}
+                  </div>
+                  <div style={{ fontSize: 14, color: '#374151', lineHeight: 1.6, marginBottom: 10, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                    {record.address || ''}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>
+                    {record.userInfo.phone || ''}
+                  </div>
+                </div>
+              }
             >
-              <Copy size={11} />
-              Copy Address
-            </button>
+              <button
+                className="copy-address-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (copyAddressRowId === record.id) {
+                    setCopyAddressRowId(null);
+                  } else {
+                    setCopyAddressRowId(record.id);
+                    const fullAddress = `${record.userInfo.name}\n\n${record.address || ''}\n\n${record.userInfo.phone || ''}`;
+                    navigator.clipboard.writeText(fullAddress);
+                    message.success('Address copied successfully!');
+                  }
+                }}
+              >
+                <Copy size={11} />
+                Copy Address
+              </button>
+            </Popover>
           </div>
         </div>
       ),
@@ -398,6 +471,8 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
                   setTagSelectRowId(record.id);
                   setCreateTagOpen(true);
                 }}
+                onEdit={handleEditTag}
+                onDelete={handleDeleteTag}
               >
                 <button className="choose-tag-btn" style={{ padding: '2px 8px', fontSize: 10, gap: 4 }}>
                   Choose Tag
@@ -658,6 +733,12 @@ const OrdersTable = memo(function OrdersTable({ orders, currentPage, onPageChang
         onSave={(tag) => {
           handleCreateTag(tag);
         }}
+      />
+      <EditTagModal
+        open={editTagOpen}
+        tag={editTag}
+        onClose={() => setEditTagOpen(false)}
+        onSave={handleSaveEditTag}
       />
       {shareOrder && (
         <ClerkShareModal
