@@ -332,6 +332,20 @@ body {
   border-bottom: none !important;
 }
 
+/* ─── FIXED COLUMN SHADOW ─── */
+.table-container .ant-table-cell-fix-left-last {
+  box-shadow: 4px 0 6px -2px rgba(0, 0, 0, 0.06) !important;
+}
+
+.table-container .ant-table-cell-fix-left {
+  z-index: 10 !important;
+  background: var(--bg-white) !important;
+}
+
+.table-container .ant-table-thead .ant-table-cell-fix-left {
+  background: #FAFAFA !important;
+}
+
 .table-container .ant-table {
   font-size: 13px;
 }

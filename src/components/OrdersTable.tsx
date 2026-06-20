@@ -146,6 +146,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       title: '#',
       key: 'index',
       width: 50,
+      fixed: 'left',
       render: (_: unknown, __: unknown, index: number) => (
         <span style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: 12 }}>
           {startIndex + index + 1}
@@ -155,7 +156,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'User Info',
       key: 'userInfo',
-      width: 180,
+      width: 240,
+      fixed: 'left',
       render: (_, record) => (
         <div className="user-info-cell">
           <div className="user-avatar">
@@ -179,7 +181,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Court Complex',
       key: 'courtComplex',
-      width: 150,
+      width: 200,
+      fixed: 'left',
       render: (_, record) => (
         <div>
           <div style={{ fontWeight: 600, fontSize: 12, color: '#111827', lineHeight: 1.3 }}>
@@ -194,7 +197,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Products',
       key: 'products',
-      width: 150,
+      width: 200,
+      fixed: 'left',
       render: (_, record) => {
         const p = record.products[0];
         return (
@@ -222,7 +226,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
         </div>
       ),
       key: 'orderDate',
-      width: 120,
+      width: 130,
+      fixed: 'left',
       render: (_, record) => {
         const elapsed = daysSince(record.orderDate);
         const status = rowStatus[record.id] || record.status;
@@ -251,7 +256,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Status',
       key: 'status',
-      width: 165,
+      width: 190,
+      fixed: 'left',
       render: (_, record) => {
         const current = rowStatus[record.id] || 'Order Placed';
         const isOpen = openStatusRowId === record.id;
@@ -354,7 +360,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
         </div>
       ),
       key: 'actions',
-      width: 80,
+      width: 90,
+      fixed: 'left',
       render: (_, record) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
           <Tooltip title="View Details">
@@ -389,7 +396,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
         </div>
       ),
       key: 'clerk',
-      width: 100,
+      width: 120,
+      fixed: 'left',
       render: (_, record) => {
         const clerk = rowClerks[record.id];
         const hasClerk = !!clerk;
@@ -460,7 +468,8 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Tags / Note',
       key: 'tagsNote',
-      width: 160,
+      width: 200,
+      fixed: 'left',
       render: (_, record) => {
         const currentTags = rowTags[record.id] || [];
         return (
@@ -535,7 +544,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'E-Copy',
       key: 'ecopy',
-      width: 70,
+      width: 80,
       render: (_, record) => {
         const uploaded = ecopyFiles[record.id];
 
@@ -586,7 +595,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Note',
       key: 'note',
-      width: 60,
+      width: 70,
       render: (_, record) => {
         const hasNote = !!notes[record.id];
         return (
@@ -630,7 +639,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
             pagination={false}
             bordered
             size="middle"
-            scroll={{ x: 1285 }}
+            scroll={{ x: 1570 }}
           />
         </div>
       </div>
