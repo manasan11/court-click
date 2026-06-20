@@ -22,6 +22,7 @@ const USERS_PER_PAGE = 3;
 const defaultFilters: FilterState = {
   district: undefined,
   court: undefined,
+  product: 'All',
   statuses: [],
   tagIds: [],
   testUsers: false,

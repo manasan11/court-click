@@ -11,7 +11,7 @@ describe('FilterModal', () => {
 
   it('renders the title', () => {
     render(<FilterModal {...defaultProps} />);
-    expect(screen.getByText('Filter Orders')).toBeInTheDocument();
+    expect(screen.getByText('Filter Users')).toBeInTheDocument();
   });
 
   it('renders District section', () => {
@@ -24,14 +24,9 @@ describe('FilterModal', () => {
     expect(screen.getByText('Court Establishment')).toBeInTheDocument();
   });
 
-  it('renders Status section', () => {
+  it('renders Product section', () => {
     render(<FilterModal {...defaultProps} />);
-    expect(screen.getByText('Status')).toBeInTheDocument();
-  });
-
-  it('renders Tags section', () => {
-    render(<FilterModal {...defaultProps} />);
-    expect(screen.getByText('Tags Quick Filter')).toBeInTheDocument();
+    expect(screen.getByText('Product')).toBeInTheDocument();
   });
 
   it('renders Test Users checkbox', () => {
@@ -51,6 +46,6 @@ describe('FilterModal', () => {
 
   it('does not render when closed', () => {
     render(<FilterModal {...defaultProps} open={false} />);
-    expect(screen.queryByText('Filter Orders')).not.toBeInTheDocument();
+    expect(screen.queryByText('Filter Users')).not.toBeInTheDocument();
   });
 });
