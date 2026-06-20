@@ -182,7 +182,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       title: 'Court Complex',
       key: 'courtComplex',
       width: 200,
-      fixed: 'left',
       render: (_, record) => (
         <div>
           <div style={{ fontWeight: 600, fontSize: 12, color: '#111827', lineHeight: 1.3 }}>
@@ -198,7 +197,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       title: 'Products',
       key: 'products',
       width: 200,
-      fixed: 'left',
       render: (_, record) => {
         const p = record.products[0];
         return (
@@ -227,7 +225,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       ),
       key: 'orderDate',
       width: 130,
-      fixed: 'left',
       render: (_, record) => {
         const elapsed = daysSince(record.orderDate);
         const status = rowStatus[record.id] || record.status;
@@ -257,7 +254,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       title: 'Status',
       key: 'status',
       width: 190,
-      fixed: 'left',
       render: (_, record) => {
         const current = rowStatus[record.id] || 'Order Placed';
         const isOpen = openStatusRowId === record.id;
@@ -361,7 +357,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       ),
       key: 'actions',
       width: 90,
-      fixed: 'left',
       render: (_, record) => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'center' }}>
           <Tooltip title="View Details">
@@ -397,7 +392,6 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
       ),
       key: 'clerk',
       width: 120,
-      fixed: 'left',
       render: (_, record) => {
         const clerk = rowClerks[record.id];
         const hasClerk = !!clerk;
@@ -468,8 +462,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'Tags / Note',
       key: 'tagsNote',
-      width: 200,
-      fixed: 'left',
+      width: 220,
       render: (_, record) => {
         const currentTags = rowTags[record.id] || [];
         return (
@@ -485,7 +478,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
                 }}
               >
                 <button className="choose-tag-btn" style={{ padding: '2px 8px', fontSize: 10, gap: 4 }}>
-                  Tag
+                  Choose Tag
                   <ChevronDown size={10} />
                 </button>
               </TagFilterDropdown>
@@ -544,7 +537,7 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
     {
       title: 'E-Copy',
       key: 'ecopy',
-      width: 80,
+      width: 100,
       render: (_, record) => {
         const uploaded = ecopyFiles[record.id];
 
@@ -631,17 +624,15 @@ export default function OrdersTable({ orders, currentPage, onPageChange }: Order
   return (
     <>
       <div className="table-container">
-        <div className="table-scroll">
-          <Table
-            columns={columns}
-            dataSource={currentOrders}
-            rowKey="id"
-            pagination={false}
-            bordered
-            size="middle"
-            scroll={{ x: 1570 }}
-          />
-        </div>
+        <Table
+          columns={columns}
+          dataSource={currentOrders}
+          rowKey="id"
+          pagination={false}
+          bordered
+          size="middle"
+          scroll={{ x: 1610 }}
+        />
       </div>
       {selectedOrder && (
         <OrderDetailModal
